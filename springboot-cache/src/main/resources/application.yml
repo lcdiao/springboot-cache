@@ -1,0 +1,28 @@
+#默认使用配置
+spring:
+  #配置日期时间
+  jackson:
+    time-zone: GMT+8
+#默认使用配置
+  datasource:
+    url: jdbc:mysql://134.175.116.100:3306/spring_cache?serverTimezone=Asia/Shanghai&characterEncoding=utf-8
+    username: root
+    password: diao
+    #driver-class-name: com.mysql.cj.jdbc.Driver
+
+#公共配置与profiles选择无关 mapperLocations指的路径是src/main/resources
+mybatis:
+  typeAliasesPackage: cn.lcdiao.springbootcache.entity
+  mapperLocations: classpath:mapper/*.xml
+  # SQL控制台打印
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+logging:
+  level:
+    cn:
+      lcdiao:
+        springbootcache:
+          dao: debug
+
+debug: true
