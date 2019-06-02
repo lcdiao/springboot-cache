@@ -1,6 +1,8 @@
 package cn.lcdiao.springbootcache.entity;
 
-public class Employee {
+import java.io.Serializable;
+
+public class Employee implements Serializable {
     private Integer id;
 
     private Integer gender;

@@ -3,10 +3,11 @@ package cn.lcdiao.springbootcache.service;
 import cn.lcdiao.springbootcache.dao.EmployeeMapper;
 import cn.lcdiao.springbootcache.entity.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.*;
 import org.springframework.stereotype.Service;
 
+//指定缓存组件的名字
+@CacheConfig(cacheNames = "emp")    //抽取缓存的公共配置
 @Service
 public class EmployeeService {
     @Autowired
@@ -28,7 +29,7 @@ public class EmployeeService {
      *      org.springframework.boot.autoconfigure.cache.CouchbaseCacheConfiguration
      *      org.springframework.boot.autoconfigure.cache.RedisCacheConfiguration
      *      org.springframework.boot.autoconfigure.cache.CaffeineCacheConfiguration
-     *      org.springframework.boot.autoconfigure.cache.SimpleCacheConfiguration
+     *      org.springframework.boot.autoconfigure.cache.SimpleCacheConfiguration   【默认】
      *      org.springframework.boot.autoconfigure.cache.NoOpCacheConfiguration
      *  3、哪个配置类默认生效?
      *      在yml配置文件中配置debug为true，查看配置信息，ctrl+f --》CacheConfiguration
@@ -70,7 +71,7 @@ public class EmployeeService {
      */
     //@Cacheable(cacheNames = "emp",condition = "#id>0",key = "#root.methodName+'['+#id+']'")
     //@Cacheable(cacheNames = "emp",condition = "#id>0",keyGenerator = "myKeyGenerator",unless="#a0==1")
-    @Cacheable(cacheNames = "emp",key = "#id")
+    @Cacheable(/*cacheNames = "emp",*/key = "#id")
     public Employee getEmp(Integer id) {
         System.out.println("查询" + id + "号员工");
         return employeeMapper.selectByPrimaryKey(id) ;
@@ -85,10 +86,36 @@ public class EmployeeService {
      * @return
      */
     //@CachePut(cacheNames = "emp",keyGenerator = "myKeyGenerator")
-    @CachePut(cacheNames = "emp",key = "#result.id")
+    @CachePut(/*cacheNames = "emp",*/key = "#result.id")
     public Employee updateEmp(Employee employee) {
         System.out.println("更新:"+employee);
         employeeMapper.updateByPrimaryKeySelective(employee);
         return employee;
+    }
+
+
+    //allEntries : 删除缓存中的所有数据
+    //beforeInvocation: 缓存的清除是否在方法执行之前，默认代表在方法执行之后执行
+    @CacheEvict(/*value = "emp",*/key = "#id",allEntries = true,beforeInvocation = false)
+    public void deleteEmp(Integer id) {
+        System.out.println("deleteEmp:" + id);
+        employeeMapper.deleteByPrimaryKey(id);
+    }
+
+
+    /*
+    以lastName为key缓存数据并更新以id、email为key的缓存
+     */
+    @Caching(
+            cacheable = {
+                @Cacheable(/*value = "emp",*/key = "#lastName")
+            },
+            put = {
+                @CachePut(/*value = "emp",*/key = "#result.id"),
+                @CachePut(/*value = "emp",*/key = "#result.email")
+            }
+    )
+    public Employee getEmpByLastName(String lastName) {
+        return employeeMapper.getEmpByLastName(lastName);
     }
 }

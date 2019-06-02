@@ -13,6 +13,14 @@
   <sql id="Base_Column_List" >
     id, gender, dId, last_name, email
   </sql>
+
+  <select id="getEmpByLastName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from employee
+    where last_name = #{lastName,jdbcType=VARCHAR}
+  </select>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />

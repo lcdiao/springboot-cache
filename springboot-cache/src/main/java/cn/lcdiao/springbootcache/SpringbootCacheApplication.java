@@ -16,9 +16,13 @@ import org.springframework.cache.annotation.EnableCaching;
  *      1、开启基于注解的缓存 @EnableCaching
  *      2、标注缓存注解即可
  *              @Cacheable      方法自治县之前先检查缓存中有没有这个数据，默认安装参数的值作为key去查询缓存，如果没有就运行方法并将结果放入缓存
- *              @CacheEvict
+ *              @CacheEvict     缓存清除，调用方法后把之前的缓存清除掉
  *              @CachePut       既调用方法，又更新缓存数据（修改了数据库的某个数据，同时更新缓存）
- *
+ * 默认使用的是ConcurrentMapCacheManager == ConcurrentMapCache；将数据保存在ConcurrentMap<Object, Object>
+ * 三、整合redis作为缓存
+ *      1、安装redis：使用docker
+ *      2、引入redis的starter
+ *      3、配置redis
  */
 @SpringBootApplication
 @MapperScan("cn.lcdiao.springbootcache.dao")
